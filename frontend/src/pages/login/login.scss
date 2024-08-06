@@ -1,0 +1,44 @@
+.login {
+  background-color: aquamarine;
+  height: 100vh;
+  display: grid;
+  place-items: center;
+  &__user {
+    box-shadow: 1px 1px 10px #aaa7;
+    margin: 0 auto;
+    width: 340px;
+    background-color: white;
+    padding: 20px 20px 40px;
+    border-radius: 10px;
+    h2 {
+      font-size: 34px;
+      text-align: center;
+      padding-bottom: 20px;
+    }
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    button,
+    input {
+      padding: 10px;
+      border-radius: 4px;
+      border: 1px solid #aaa7;
+      outline: none;
+    }
+
+    button {
+      margin-top: 10px;
+      background-color: blue;
+      color: white;
+    }
+  }
+}
