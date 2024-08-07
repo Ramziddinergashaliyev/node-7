@@ -5,7 +5,6 @@ import {
 } from "../../context/api/userApi";
 import "./cards.scss";
 import Form from "../form/Form";
-import Typography from "@mui/material/Typography";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 
@@ -16,7 +15,7 @@ const Cards = () => {
   const handleChange = (event, value) => {
     setPage(value);
   };
-  const { data } = useGetUsersQuery({ limit: 4, skip: page });
+  const { data } = useGetUsersQuery({ limit: 3 });
   console.log(data);
 
   const userData = data?.payload?.map((el) => (
@@ -37,8 +36,6 @@ const Cards = () => {
     </div>
   ));
 
-  let limit = 3;
-
   console.log(data?.total);
 
   return (
@@ -55,13 +52,6 @@ const Cards = () => {
         <button onClick={() => setShow(true)}>+ Create</button>
       </div>
       <div className="user__cards">{userData}</div>
-      <Stack spacing={1}>
-        <Pagination
-          count={Math.ceil(data?.total / limit)}
-          page={page}
-          onChange={handleChange}
-        />
-      </Stack>
     </div>
   );
 };

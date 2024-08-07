@@ -111,6 +111,70 @@ class UsersController {
       });
     }
   }
+  async delete(req, res) {
+    try {
+      const { id } = req.params;
+      await Users.findByIdAndDelete(id);
+      res.status(201).json({
+        msg: "user is deleted",
+        variant: "succes",
+        payload: null,
+      });
+    } catch {
+      res.status(500).json({
+        msg: "server error",
+        variant: "error",
+        payload: null,
+      });
+    }
+  }
+  async updateProfile(req, res) {
+    try {
+      let profile = await Users.findOne({ _id: req.user._id });
+      if (!profile) {
+        return res.status(404).json({
+          msg: "Profile not found.",
+          variant: "error",
+          payload: null,
+        });
+      }
+
+      const existingProfile = await Users.findOne({
+        username: req.body.username,
+      });
+      if (
+        existingProfile &&
+        existingProfile._id.toString() !== req.user._id.toString()
+      ) {
+        return res.status(400).json({
+          msg: "Username already exists.",
+          variant: "error",
+          payload: null,
+        });
+      }
+
+      if (!req.body.password) {
+        req.body.password = profile.password;
+      }
+
+      const newProfile = await Users.findByIdAndUpdate(req.user._id, req.body, {
+        new: true,
+      });
+
+      res.status(200).json({
+        msg: "Profile is updated",
+        variant: "success",
+        payload: newProfile,
+      });
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      res.status(500).json({
+        msg: "Server error",
+        variant: "error",
+        payload: null,
+      });
+    }
+  }
   async updateUser(req, res) {
     try {
       const { id } = req.params;
@@ -134,6 +198,57 @@ class UsersController {
     } catch (err) {
       res.status(500).json({
         msg: err.message,
+        variant: "error",
+        payload: null,
+      });
+    }
+  }
+  async editPassword(req, res) {
+    try {
+      const user = await Users.findById(req.user._id);
+      if (!user) {
+        return res.status(404).json({
+          msg: "Foydalanuvchi topilmadi.",
+          variant: "error",
+          payload: null,
+        });
+      }
+
+      const isPasswordCorrect = await bcrypt.compare(
+        req.body.oldPassword,
+        user.password
+      );
+      if (!isPasswordCorrect) {
+        return res.status(400).json({
+          msg: "Eski parol noto'g'ri.",
+          variant: "error",
+          payload: null,
+        });
+      }
+
+      if (!req.body.newPassword || req.body.newPassword.length < 8) {
+        return res.status(400).json({
+          msg: "Yangi parol kamida 8 ta belgidan iborat bo'lishi kerak.",
+          variant: "error",
+          payload: null,
+        });
+      }
+
+      const newPasswordHash = await bcrypt.hash(req.body.newPassword, 10);
+      user.password = newPasswordHash;
+
+      await user.save();
+
+      res.status(200).json({
+        msg: "Parol muvaffaqiyatli yangilandi",
+        variant: "success",
+        payload: null,
+      });
+    } catch (error) {
+      console.error("Parolni yangilashda xato:", error);
+
+      res.status(500).json({
+        msg: "Server xatosi",
         variant: "error",
         payload: null,
       });

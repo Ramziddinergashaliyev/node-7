@@ -34,7 +34,6 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     await createUser(value);
-    // Reset form state only after successful creation
     setValue(initialState);
   };
 
