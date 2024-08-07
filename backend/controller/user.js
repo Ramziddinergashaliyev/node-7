@@ -207,7 +207,7 @@ class UsersController {
     try {
       const user = await Users.findById(req.user._id);
       if (!user) {
-        return res.status(404).json({
+        return res.status(400).json({
           msg: "Foydalanuvchi topilmadi.",
           variant: "error",
           payload: null,
